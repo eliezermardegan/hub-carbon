@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Intelligence | Hub Carbon</title>
+<meta name="description" content="Explore the carbon, economic, technology and financing potential of a low-carbon project with Hub Carbon Project Intelligence.">
+<meta name="theme-color" content="#0b3d2e">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon.png"><link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html" aria-label="Hub Carbon home"><img src="../assets/logo-green.png" alt="Hub Carbon"></a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" class="site-nav">
+      <a href="../index.html#hubs">Hubs</a><a href="../index.html#ecosystem">Ecosystem</a><a href="../index.html#infrastructure">Infrastructure</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="pi-hero">
+  <div class="container">
+    <div class="kicker light-muted">Hub Carbon / Project Intelligence</div>
+    <h1>Explore the potential<br><em>of your project.</em></h1>
+    <p>Tell us what you are planning. We will help you explore its carbon, economic, technology, financing and market potential — before you invest in a full project assessment.</p>
+  </div>
+</section>
+
+<section class="section section-light pi-section">
+<div class="container">
+  <div class="pi-layout">
+    <div>
+      <div class="pi-stepbar"><span class="active" data-step-dot="1">01</span><i></i><span data-step-dot="2">02</span><i></i><span data-step-dot="3">03</span></div>
+      <div id="pi-form-wrap">
+        <form id="project-intelligence-form" class="pi-form" novalidate>
+          <div class="pi-step active" data-step="1">
+            <div class="kicker">01 / The opportunity</div><h2>What are you planning?</h2><p class="pi-intro">Start with the project, not the carbon credit.</p>
+            <div class="pi-choice-grid">
+              <label class="pi-choice"><input type="radio" name="project_type" value="Carbon removal / CDR"><span><strong>Carbon removal / CDR</strong><small>Biochar, mineralisation, DAC, biomass carbon removal and similar projects.</small></span></label>
+              <label class="pi-choice"><input type="radio" name="project_type" value="Industrial decarbonisation"><span><strong>Industrial decarbonisation</strong><small>Process changes, electrification, efficiency, fuel switching and low-carbon materials.</small></span></label>
+              <label class="pi-choice"><input type="radio" name="project_type" value="Energy / renewable energy"><span><strong>Energy / renewable energy</strong><small>Renewables, storage, electrification and energy efficiency.</small></span></label>
+              <label class="pi-choice"><input type="radio" name="project_type" value="Waste / circular economy"><span><strong>Waste / circular economy</strong><small>Waste-to-value, recycling, methane reduction and resource recovery.</small></span></label>
+              <label class="pi-choice"><input type="radio" name="project_type" value="Transport / equipment"><span><strong>Transport / equipment</strong><small>Fleet electrification, equipment replacement and logistics transformation.</small></span></label>
+              <label class="pi-choice"><input type="radio" name="project_type" value="Other climate project"><span><strong>Other climate project</strong><small>A technology or opportunity that does not fit the categories above.</small></span></label>
+            </div>
+            <div class="pi-actions"><button type="button" class="button button-dark" data-next="2">Continue <span>→</span></button></div>
+          </div>
+
+          <div class="pi-step" data-step="2">
+            <div class="kicker">02 / Project profile</div><h2>Tell us about the project.</h2><p class="pi-intro">These inputs are used for an indicative first assessment only.</p>
+            <div class="pi-fields">
+              <label>Project country<select name="country" required><option value="">Select country</option><option>Ghana</option><option>United Kingdom</option><option>Brazil</option><option>United States</option><option>India</option><option>Kenya</option><option>South Africa</option><option>United Arab Emirates</option><option>Other</option></select></label>
+              <label>Project stage<select name="stage" required><option value="">Select stage</option><option>Early idea</option><option>Pre-feasibility</option><option>Feasibility / design</option><option>Financing</option><option>Construction / implementation</option><option>Operating project</option></select></label>
+              <label>Estimated annual scale<input name="scale" type="number" min="0" step="any" placeholder="e.g. 10000"><small>Use tonnes/year, MWh/year, units/year or another useful project measure.</small></label>
+              <label>Estimated investment / CAPEX<input name="capex" type="number" min="0" step="any" placeholder="e.g. 5000000"><small>Enter an approximate amount in USD.</small></label>
+              <label>Primary objective<select name="objective" required><option value="">Select objective</option><option>Reduce emissions</option><option>Remove carbon</option><option>Reduce cost / improve efficiency</option><option>Generate carbon value</option><option>Access finance</option><option>Develop a new climate asset</option><option>Multiple objectives</option></select></label>
+              <label>Current situation<textarea name="current_situation" rows="3" placeholder="What exists today? For example: diesel equipment, agricultural residues, industrial CO₂, cement process, energy consumption..."></textarea></label>
+              <label>Proposed solution<textarea name="solution" rows="3" placeholder="What are you considering implementing?"></textarea></label>
+            </div>
+            <div class="pi-actions"><button type="button" class="button button-ghost-dark" data-prev="1">Back</button><button type="button" class="button button-dark" data-next="3">Explore potential <span>→</span></button></div>
+          </div>
+
+          <div class="pi-step" data-step="3">
+            <div class="kicker">03 / Project potential</div><h2>Your indicative project profile.</h2><p class="pi-intro">The results below are directional and are not a certification, investment recommendation or confirmation of carbon-credit eligibility.</p>
+            <div id="pi-results"></div>
+            <div class="pi-report-box"><div><div class="kicker">Next step</div><h3>Receive the detailed Project Intelligence Report.</h3><p>We will send a summary of the assessment, assumptions, opportunities and key questions for further diligence to your email.</p></div>
+              <div class="pi-lead-grid"><label>Full name<input name="full_name" required></label><label>Work email<input name="email" type="email" required></label><label>Company<input name="company"></label><label>Phone / WhatsApp<input name="phone"></label></div>
+              <label class="pi-consent"><input type="checkbox" name="report_consent" required> <span>I agree that Hub Carbon may use the information I provide to prepare and send this Project Intelligence Report and contact me about the project.</span></label>
+              <input type="hidden" name="_subject" value="Hub Carbon — Project Intelligence Report request"><input type="hidden" name="report_summary" id="report_summary"><input type="text" name="_honey" tabindex="-1" autocomplete="off" class="honeypot">
+              <button class="button button-dark" type="submit">Send my report <span>↗</span></button><p id="pi-form-status" class="form-status" role="status"></p>
+            </div>
+            <div class="pi-actions"><button type="button" class="button button-ghost-dark" data-prev="2">Back</button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <aside class="pi-aside">
+      <div class="pi-wheel">
+        <div class="pi-wheel-core">YOUR<br><em>PROJECT</em></div>
+        <span class="w1">Carbon</span><span class="w2">Finance</span><span class="w3">Technology</span><span class="w4">MRV</span><span class="w5">Market</span><span class="w6">Regulation</span>
+      </div>
+      <div class="pi-aside-copy"><strong>The project is the hub.</strong><p>Hub Carbon connects the capabilities around it — carbon, technology, MRV, finance, markets and regulation — to understand what makes the project work.</p></div>
+    </aside>
+  </div>
+</div>
+</section>
+<section class="section pi-disclaimer"><div class="container"><p><strong>Important:</strong> Project Intelligence is an indicative screening tool. Carbon volumes, credit eligibility, financial returns, funding availability, technology performance and regulatory requirements require detailed project-specific assessment and, where applicable, independent validation or verification.</p></div></section>
+</main>
+<footer class="footer"><div class="container footer-top"><div><img src="../assets/logo-green.png" alt="Hub Carbon" class="footer-logo"><p>Connecting the low-carbon economy.</p></div><div class="footer-links"><a href="../index.html#hubs">Hubs</a><a href="../index.html#ecosystem">Ecosystem</a><a href="../index.html#infrastructure">Infrastructure</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy &amp; Cookies</a></div></div><div class="container footer-bottom footer-legal"><div>Hub Carbon Limited is a company registered in England and Wales with registered number 15657271<br>and its registered office at 71–75 Sheldon Street, London WC2H 9JQ, United Kingdom.</div><div>© 2026 Hub Carbon. All rights reserved.</div></div></footer>
+<script src="../js/main.js"></script><script src="../js/project-intelligence.js"></script>
+<div id="cookie-banner" class="cookie-banner" role="region" aria-label="Cookie notice" hidden><div><div class="cookie-eyebrow">Privacy &amp; cookies</div><h2 class="cookie-title">Your privacy matters.</h2><p class="cookie-copy">Hub Carbon currently uses only essential storage to keep the website working and remember your privacy choice. We do not currently use analytics or advertising cookies. <a href="privacy.html">Read our Privacy &amp; Cookies notice</a>.</p></div><div class="cookie-actions"><button class="cookie-button" type="button" data-cookie-settings>Cookie settings</button><button class="cookie-button primary" type="button" data-cookie-essential>Continue with essential only</button></div></div>
+<div id="cookie-settings" class="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-settings-title" hidden><div class="cookie-dialog"><div class="cookie-dialog-head"><div><h2 id="cookie-settings-title">Cookie settings</h2><p>Choose how Hub Carbon may use storage and access technologies. Your choice is remembered on this device and can be changed at any time.</p></div><button class="cookie-close" type="button" aria-label="Close cookie settings">×</button></div><div class="cookie-option"><div><strong>Essential</strong><p>Required for core website functions and to remember your privacy preference.</p></div><span class="cookie-status">Always active</span></div><div class="cookie-option"><div><strong>Analytics</strong><p>No analytics technology is currently active on this site.</p></div><span class="cookie-status">Not currently active</span></div><div class="cookie-dialog-foot"><button class="cookie-button primary" type="button" data-cookie-essential>Save essential only</button></div></div></div>
+</body></html>
