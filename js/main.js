@@ -5,7 +5,7 @@ if(menuButton && nav){
     const open=nav.classList.toggle('open');
     menuButton.setAttribute('aria-expanded',String(open));
     document.body.classList.toggle('menu-open',open);
-    menuButton.textContent=open?'Close':'Menu';
+    menuButton.textContent=open?(window.HubCarbonI18n?.getLocale()==='pt'?'Fechar':window.HubCarbonI18n?.getLocale()==='es'?'Cerrar':'Close'):(window.HubCarbonI18n?.getLocale()==='pt'?'Menu':window.HubCarbonI18n?.getLocale()==='es'?'Menú':'Menu');
   });
 }
 
