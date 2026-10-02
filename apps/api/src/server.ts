@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import sensible from "@fastify/sensible";
 import { z } from "zod";
 import crypto from "node:crypto";
+import { prisma } from "@hubcarbon/database";
 
 const app = Fastify({ logger: true });
 await app.register(cors, { origin: true });
@@ -15,6 +16,47 @@ const Claim = z.object({
   value: z.unknown(),
   source: z.string().min(1),
   methodologyVersion: z.string().min(1)
+});
+
+app.get("/health", async () => {
+  const database = await prisma.$queryRawUnsafe<{ ok: number }[]>("SELECT 1 AS ok");
+  return {
+    service: "hubcarbon-api",
+    status: database[0]?.ok === 1 ? "ok" : "degraded",
+    version: "0.1.0",
+    database: database[0]?.ok === 1 ? "ok" : "degraded"
+  };
+});
+
+app.get("/v1/tenants/:tenantId", async (request, reply) => {
+  const { tenantId } = request.params as { tenantId: string };
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+  if (!tenant) return reply.notFound("Tenant not found");
+  return tenant;
+});
+
+app.post("/v1/activities", async (request, reply) => {
+  const Body = z.object({
+    tenantId: z.string().min(1),
+    activityType: z.string().min(1),
+    quantity: z.number().finite(),
+    unit: z.string().min(1),
+    startAt: z.string().datetime(),
+    endAt: z.string().datetime(),
+    sourceSystem: z.string().min(1),
+    sourceRecordId: z.string().optional()
+  });
+  const parsed = Body.safeParse(request.body);
+  if (!parsed.success) return reply.badRequest(parsed.error.flatten());
+  const data = parsed.data;
+  const activity = await prisma.activity.create({ data: {
+    ...data,
+    startAt: new Date(data.startAt),
+    endAt: new Date(data.endAt),
+    quantity: data.quantity,
+    status: "raw"
+  }});
+  return reply.code(201).send(activity);
 });
 
 app.get("/health", async () => ({
