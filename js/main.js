@@ -4,6 +4,7 @@ if(menuButton && nav){
   menuButton.addEventListener('click',()=>{
     const open=nav.classList.toggle('open');
     menuButton.setAttribute('aria-expanded',String(open));
+    document.body.classList.toggle('menu-open',open);
     menuButton.textContent=open?'Close':'Menu';
   });
 }
@@ -14,7 +15,7 @@ const observer=new IntersectionObserver(entries=>{
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',()=>{
-    if(nav){nav.classList.remove('open');if(menuButton){menuButton.textContent='Menu';menuButton.setAttribute('aria-expanded','false');}}
+    if(nav){nav.classList.remove('open');document.body.classList.remove('menu-open');if(menuButton){menuButton.textContent='Menu';menuButton.setAttribute('aria-expanded','false');}}
   });
 });
 
@@ -58,3 +59,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
+
+
+/* Close the mobile menu with Escape and keep background content scrollable. */
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape' && nav?.classList.contains('open')){
+    nav.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    if(menuButton){menuButton.textContent='Menu';menuButton.setAttribute('aria-expanded','false');menuButton.focus();}
+  }
+});
