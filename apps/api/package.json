@@ -1,1 +1,29 @@
-{"name":"@hubcarbon/api","private":true,"version":"0.1.0","type":"module","scripts":{"dev":"tsx watch src/server.ts","build":"tsc","start":"node dist/server.js","test":"vitest run"},"dependencies":{"@fastify/cors":"latest","@fastify/sensible":"latest","fastify":"latest","zod":"latest","@prisma/client":"latest"},"devDependencies":{"prisma":"latest","tsx":"latest","typescript":"latest","vitest":"latest","@types/node":"latest"}}
+{
+  "name": "@hubcarbon/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fastify/cors": "latest",
+    "@fastify/sensible": "latest",
+    "fastify": "latest",
+    "zod": "latest",
+    "@prisma/client": "latest",
+    "@hubcarbon/database": "workspace:*",
+    "@hubcarbon/core": "workspace:*",
+    "@hubcarbon/integration": "workspace:*"
+  },
+  "devDependencies": {
+    "prisma": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest",
+    "@types/node": "latest"
+  }
+}
