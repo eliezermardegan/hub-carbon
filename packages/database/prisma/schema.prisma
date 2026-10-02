@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+  DISABLED
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  CONTRIBUTOR
+  REVIEWER
+  VIEWER
+}
+
+enum EvidenceType {
+  DOCUMENT
+  MEASUREMENT
+  INVOICE
+  STATEMENT
+  SENSOR
+  ATTESTATION
+  OTHER
+}
+
+enum EvidenceClassification {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum ActivityStatus {
+  RAW
+  VALIDATED
+  ACCEPTED
+  REJECTED
+}
+
+model Tenant {
+  id                String                @id @default(uuid()) @db.Uuid
+  slug              String                @unique
+  name              String
+  status            String                @default("active")
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  users             User[]
+  memberships       Membership[]
+  sources           SourceSystem[]
+  connectors        IntegrationConnector[]
+  evidence          EvidenceObject[]
+  activities        ActivityRecord[]
+  factors           EmissionFactor[]
+  results           EmissionResult[]
+  methodologies     Methodology[]
+  regulatoryRules   RegulatoryRequirement[]
+  auditEvents       AuditEvent[]
+  boundaries        ReportingBoundary[]
+}
+
+model User {
+  id                String                @id @default(uuid()) @db.Uuid
+  externalSubject    String?               @unique
+  email              String                @unique
+  displayName        String
+  status             UserStatus            @default(INVITED)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  memberships       Membership[]
+  auditEvents        AuditEvent[]          @relation("AuditActor")
+}
+
+model Membership {
+  id                String       @id @default(uuid()) @db.Uuid
+  tenantId           String       @db.Uuid
+  userId             String       @db.Uuid
+  role               MembershipRole
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  tenant             Tenant       @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  user               User         @relation(fields:[userId], references:[id], onDelete:Cascade)
+
+  @@unique([tenantId,userId])
+  @@index([userId])
+  @@index([tenantId,role])
+}
+
+model SourceSystem {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  name              String
+  systemType        String
+  baseUri            String?
+  environment       String?
+  schemaVersion     String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  connectors        IntegrationConnector[]
+  evidence          EvidenceObject[]
+  activities        ActivityRecord[]
+
+  @@unique([tenantId,name])
+  @@index([tenantId,systemType])
+}
+
+model IntegrationConnector {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  sourceSystemId    String        @db.Uuid
+  name              String
+  connectorType     String
+  status            String        @default("configured")
+  schemaVersion     String
+  connectorVersion  String
+  checkpoint        Json?
+  lastHealthyAt     DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  sourceSystem      SourceSystem  @relation(fields:[sourceSystemId], references:[id], onDelete:Cascade)
+
+  @@unique([tenantId,name])
+  @@index([sourceSystemId])
+  @@index([tenantId,status])
+}
+
+model ReportingBoundary {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  name              String
+  boundaryType      String
+  effectiveFrom     DateTime
+  effectiveTo       DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+
+  @@index([tenantId,effectiveFrom])
+}
+
+model EvidenceObject {
+  id                String                @id @default(uuid()) @db.Uuid
+  tenantId          String                @db.Uuid
+  sourceSystemId    String?               @db.Uuid
+  evidenceType      EvidenceType
+  title             String
+  uri               String
+  contentHash       String
+  capturedAt        DateTime
+  classification    EvidenceClassification
+  metadata          Json?
+  createdAt         DateTime              @default(now())
+  tenant            Tenant                @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  sourceSystem      SourceSystem?         @relation(fields:[sourceSystemId], references:[id], onDelete:SetNull)
+  activities        ActivityEvidence[]
+  auditEvents       AuditEvent[]
+
+  @@unique([tenantId,contentHash])
+  @@index([tenantId,capturedAt])
+  @@index([tenantId,evidenceType])
+}
+
+model ActivityRecord {
+  id                String             @id @default(uuid()) @db.Uuid
+  tenantId          String             @db.Uuid
+  sourceSystemId    String?            @db.Uuid
+  activityType      String
+  quantity          Decimal            @db.Decimal(30,10)
+  unit              String
+  startAt           DateTime
+  endAt             DateTime
+  facilityRef       String?
+  assetRef          String?
+  status             ActivityStatus    @default(RAW)
+  sourceRecordId     String?
+  provenance         Json
+  contentHash        String
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  tenant             Tenant             @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  sourceSystem       SourceSystem?      @relation(fields:[sourceSystemId], references:[id], onDelete:SetNull)
+  evidenceLinks      ActivityEvidence[]
+  results            EmissionResult[]
+
+  @@unique([tenantId,sourceSystemId,sourceRecordId])
+  @@index([tenantId,startAt,endAt])
+  @@index([tenantId,activityType])
+  @@index([tenantId,status])
+}
+
+model ActivityEvidence {
+  activityId         String          @db.Uuid
+  evidenceId         String          @db.Uuid
+  relationshipType   String          @default("supports")
+  activity            ActivityRecord @relation(fields:[activityId], references:[id], onDelete:Cascade)
+  evidence           EvidenceObject  @relation(fields:[evidenceId], references:[id], onDelete:Cascade)
+
+  @@id([activityId,evidenceId])
+  @@index([evidenceId])
+}
+
+model EmissionFactor {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  factorSet         String
+  factorCode        String
+  version           String
+  validFrom         DateTime
+  validTo           DateTime?
+  gas               String
+  value             Decimal       @db.Decimal(30,15)
+  unit              String
+  geography         String?
+  source             Json
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  results            EmissionResult[]
+
+  @@unique([tenantId,factorSet,factorCode,version])
+  @@index([tenantId,factorSet,factorCode,validFrom])
+}
+
+model Methodology {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  code              String
+  version           String
+  name              String
+  status            String        @default("draft")
+  specification     Json
+  sourceReferences  Json?
+  checksum          String
+  effectiveFrom     DateTime?
+  effectiveTo       DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  results            EmissionResult[]
+
+  @@unique([tenantId,code,version])
+  @@index([tenantId,status])
+}
+
+model EmissionResult {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  activityId        String        @db.Uuid
+  factorId          String        @db.Uuid
+  methodologyId     String        @db.Uuid
+  methodologyVersion String
+  co2eKg            Decimal       @db.Decimal(30,12)
+  calculatedAt      DateTime      @default(now())
+  inputSnapshotHash String
+  trace             Json
+  createdAt         DateTime      @default(now())
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  activity           ActivityRecord @relation(fields:[activityId], references:[id], onDelete:Restrict)
+  factor             EmissionFactor @relation(fields:[factorId], references:[id], onDelete:Restrict)
+  methodology        Methodology  @relation(fields:[methodologyId], references:[id], onDelete:Restrict)
+
+  @@index([tenantId,calculatedAt])
+  @@index([tenantId,activityId])
+  @@index([tenantId,methodologyId,methodologyVersion])
+}
+
+model RegulatoryRequirement {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  authority         String
+  jurisdiction      String
+  instrument        String
+  version           String
+  status            String
+  sourceRef         String
+  publishedAt       DateTime?
+  effectiveFrom     DateTime?
+  effectiveTo       DateTime?
+  applicability     Json
+  requiredData      Json
+  methodologyRefs   Json
+  evidenceRequirements Json
+  controlRequirements Json
+  assuranceRequirements Json
+  outputMappings    Json
+  supersedesId      String?       @db.Uuid
+  checksum          String
+  capturedAt        DateTime
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+
+  @@unique([tenantId,authority,jurisdiction,instrument,version])
+  @@index([tenantId,status,effectiveFrom])
+  @@index([tenantId,jurisdiction,instrument])
+}
+
+model AuditEvent {
+  id                String        @id @default(uuid()) @db.Uuid
+  tenantId          String        @db.Uuid
+  actorId           String?       @db.Uuid
+  action            String
+  objectType        String
+  objectId          String        @db.Uuid
+  occurredAt        DateTime      @default(now())
+  correlationId     String        @db.Uuid
+  previousHash      String?
+  eventHash         String
+  payload           Json
+  actor             User?         @relation("AuditActor", fields:[actorId], references:[id], onDelete:SetNull)
+  tenant            Tenant        @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  evidence           EvidenceObject? @relation(fields:[objectId], references:[id], onDelete:NoAction)
+
+  @@index([tenantId,occurredAt])
+  @@index([tenantId,objectType,objectId])
+  @@index([tenantId,correlationId])
+  @@index([eventHash])
+}
