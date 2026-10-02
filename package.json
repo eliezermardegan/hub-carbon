@@ -1,0 +1,1 @@
+{"name":"@hubcarbon/platform","private":true,"version":"0.1.0","description":"HubCarbon open carbon accounting, dMRV and CDR project platform","license":"MIT","packageManager":"pnpm@10.0.0","scripts":{"dev":"pnpm --filter @hubcarbon/api dev","build":"pnpm -r build","test":"pnpm -r test"},"engines":{"node":">=22"}}
