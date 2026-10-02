@@ -155,3 +155,16 @@ body.cookie-modal-open{overflow:hidden}
 }
 
 @media(max-width:900px){body.menu-open{overflow:hidden}}
+
+
+/* Lightweight i18n controls */
+.nav-languages{display:flex;align-items:center;gap:14px}
+.nav-languages-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:#89938c}
+.language-options{display:flex;align-items:center;gap:6px}
+.language-option{appearance:none;border:1px solid var(--line);background:transparent;color:inherit;border-radius:999px;min-width:38px;padding:7px 9px;font:600 11px Inter,system-ui,sans-serif;cursor:pointer;transition:background .18s ease,color .18s ease,border-color .18s ease}
+.language-option:hover{border-color:currentColor}
+.language-option.is-active{background:var(--green);border-color:var(--green);color:#fff}
+@media(max-width:900px){
+  .nav-languages{display:flex;align-items:center;justify-content:space-between;gap:18px;border-top:1px solid var(--line);margin-top:14px;padding-top:18px}
+  .language-option{min-width:46px;padding:9px 11px}
+}
